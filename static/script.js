@@ -1,67 +1,59 @@
 document.getElementById('fileInput').addEventListener('change', async (event) => {
-    const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append('file', file); // Ensure the form data key is 'file'
+            const file = event.target.files[0];
+            const formData = new FormData();
+            formData.append('image_file', file);
 
-    // Show progress bar
-    const progressBar = document.getElementById('progressBar');
-    const progressBarInner = document.getElementById('progressBarInner');
-    progressBar.style.display = 'block';
-    progressBarInner.style.width = '0%';
+            // Show progress bar
+            const progressBar = document.getElementById('progressBar');
+            const progressBarInner = document.getElementById('progressBarInner');
+            progressBar.style.display = 'block';
+            progressBarInner.style.width = '0%';
 
-    const fileReader = new FileReader();
-    fileReader.onload = (e) => {
-        const originalImage = document.createElement('img');
-        originalImage.src = e.target.result;
-        originalImage.alt = 'Uploaded Image';
-        const resultImage = document.getElementById('resultImage');
-        resultImage.innerHTML = '';
-        resultImage.appendChild(originalImage);
-    };
-    fileReader.readAsDataURL(file);
-
-    try {
-        progressBarInner.style.width = '50%';
-        const response = await axios.post('https://api.backgroundcut.co/remove-background', formData, {
-            headers: {
-                'X-Api-Key': '9d8846fdd13149dc89c3cd0e43188626fe69f7b9' // Add your API key here
-            },
-            responseType: 'blob'
-        });
-
-        console.log(response); // Log the response
-
-        if (response.status === 200) {
-            progressBarInner.style.width = '100%';
-
-            const resultImage = document.getElementById('resultImage');
-            const url = URL.createObjectURL(response.data);
-            const img = document.createElement('img');
-            img.src = url;
-            img.alt = 'Image with Removed Background';
-            resultImage.appendChild(img);
-
-            // Show download button
-            const downloadBtn = document.getElementById('downloadBtn');
-            downloadBtn.style.display = 'block';
-            downloadBtn.onclick = () => {
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'removed-bg-image.png';
-                link.click();
+            const fileReader = new FileReader();
+            fileReader.onload = (e) => {
+                const originalImage = document.createElement('img');
+                originalImage.src = e.target.result;
+                originalImage.alt = 'Uploaded Image';
+                const resultImage = document.getElementById('resultImage');
+                resultImage.innerHTML = '';
+                resultImage.appendChild(originalImage);
             };
+            fileReader.readAsDataURL(file);
 
-            // Hide progress bar
-            setTimeout(() => {
+            try {
+                progressBarInner.style.width = '50%';
+                const response = await axios.post('https://api.remove.bg/v1.0/removebg', formData, {
+                    headers: {
+                        'X-Api-Key': 'Mtix4keGHXoT4zfYwUDc1JFF'
+                    },
+                    responseType: 'blob'
+                });
+                progressBarInner.style.width = '100%';
+
+                const resultImage = document.getElementById('resultImage');
+                const url = URL.createObjectURL(response.data);
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = 'Image with Removed Background';
+                resultImage.appendChild(img);
+
+                // Show download button
+                const downloadBtn = document.getElementById('downloadBtn');
+                downloadBtn.style.display = 'block';
+                downloadBtn.onclick = () => {
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'removed-bg-image.png';
+                    link.click();
+                };
+
+                // Hide progress bar
+                setTimeout(() => {
+                    progressBar.style.display = 'none';
+                    progressBarInner.style.width = '0%';
+                }, 500);
+            } catch (error) {
+                console.error('Error removing background:', error);
                 progressBar.style.display = 'none';
-                progressBarInner.style.width = '0%';
-            }, 500);
-        } else {
-            throw new Error('Failed to remove background');
-        }
-    } catch (error) {
-        console.error('Error:', error); // Log the error
-        progressBar.style.display = 'none';
-        alert('There was an error processing your image. Please try again.');
-    }
-});
+            }
+        });
