@@ -24,7 +24,7 @@ document.getElementById('fileInput').addEventListener('change', async (event) =>
                 progressBarInner.style.width = '50%';
                 const response = await axios.post('https://api.remove.bg/v1.0/removebg', formData, {
                     headers: {
-                        'X-Api-Key': 'Mtix4keGHXoT4zfYwUDc1JFF'
+                        'X-Api-Key': 'MMnRcqVwkWsxwGXxyBpHhxeZ'
                     },
                     responseType: 'blob'
                 });
